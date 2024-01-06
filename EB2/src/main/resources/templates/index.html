@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- boxicon cdn link -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <!-- custom css link -->
+    <link rel="stylesheet" th:href="@{/css/style.css/}" />
+
+    <link rel="stylesheet" th:href="@{css/uikit.min.css}" />
+    <script th:src="@{js/uikit.min.js}"></script>
+    <script th:src="@{js/uikit-icons.min.js}"></script>
+
+    <!-- add js for annualy, quartly, monthly bar graph -->
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript" th:src="@{/script.js/}"></script>
+
+    <title>嘉義茶農</title>
+  </head>
+
+  <body>
+    <!-- header section start -->
+    <header>
+      <!--         <a href="#home"><img src="image/tea-logo.png" alt="" width="110"></a>
+
+ -->
+      <a href="#home"
+        ><img th:src="@{images/tea-logo.png}" alt="" width="110"
+      /></a>
+
+      <nav class="navbar">
+        <ul>
+          <li><a href="#home">首頁</a></li>
+          <li><a href="#inventory">庫存管理</a></li>
+          <li><a href="#schedule">種植排程</a></li>
+          <li><a href="#order">訂單</a></li>
+          <li><a href="#cust-analysis">顧客分析</a></li>
+          <li><a href="#sale-analysis">銷售分析</a></li>
+          <li><a href="#cust-info">顧客資料查詢</a></li>
+        </ul>
+      </nav>
+    </header>
+    <!-- header section end -->
+
+    <!-- home section start -->
+    <div class="slider-container" id="home">
+      <div class="slider">
+        <!-- slide box -->
+        <div class="slideBox active">
+          <div class="textBox">
+            <h1>嘉義茶農 管理系統</h1>
+          </div>
+          <div class="imgBox">
+            <!--                     <img src="image/slider.webp" alt="">
+ -->
+            <img th:src="@{images/slider.webp}" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- home section end -->
+
+    <!-- inventory section -->
+    <div class="inventory" id="inventory">
+      <div class="heading">
+        <h1>庫存管理</h1>
+      </div>
+
+      <div class="uk-margin-small uk-card uk-card-default uk-card-body">
+        <div>
+          <label for="datepicker1">選擇日期：</label>
+          <input type="date" id="datepicker1" name="datepicker1" />
+        </div>
+
+        <script>
+          const today1 = new Date().toISOString().split("T")[0];
+          document.getElementById("datepicker1").value = today1;
+        </script>
+
+        <table>
+          <thead>
+            <tr>
+              <th>圖片</th>
+              <th>ID</th>
+              <th>茶種</th>
+              <th>庫存量</th>
+              <th>零售價</th>
+              <th>批發價</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!--  <td><img class="image" src="image/ulong.jpg" alt=""></td> -->
+              <td><img class="image" th:src="@{images/ulong.jpg}" alt="" /></td>
+              <td>1</td>
+              <td contenteditable="false" edit="tdisable" id="productName">
+                青心烏龍茶
+              </td>
+              <td contenteditable="false" id="quantity">50000 包</td>
+              <td contenteditable="false" id="price">＄50</td>
+              <td contenteditable="false" id="discount">＄30</td>
+              <td>
+                <button
+                  class="editBtn"
+                  onclick="toggleEditMode1(this)"
+                  id="sbt"
+                >
+                  編輯
+                </button>
+              </td>
+            </tr>
+
+            <script>
+              function toggleEditMode1(button) {
+                var row = button.closest("tr");
+                var cells = row.querySelectorAll("td:not(:last-child)");
+                cells.forEach(function (cell) {
+                  var isEditable =
+                    cell.getAttribute("contenteditable") === "true";
+                  cell.contentEditable = !isEditable;
+                });
+
+                if (button.textContent === "編輯") {
+                  button.textContent = "儲存";
+                  button.className = "saveBtn";
+                } else {
+                  button.textContent = "編輯";
+                  button.className = "editBtn";
+
+                  // Save the updated data
+                  saveUpdatedData(row);
+                }
+              }
+
+              function saveUpdatedData(row) {
+                // Get the updated values from the cells
+                var productName = row.querySelector("#productName").textContent;
+                var quantity = row.querySelector("#quantity").textContent;
+                var price = row.querySelector("#price").textContent;
+                var discount = row.querySelector("#discount").textContent;
+
+                // Perform any additional logic or send data to the server if needed
+                console.log("Product Name: " + productName);
+                console.log("Quantity: " + quantity);
+                console.log("Price: " + price);
+                console.log("Discount: " + discount);
+
+                if (quantity < 2000) {
+                  window.alert("請注意存貨!");
+                }
+              }
+            </script>
+
+            <tr>
+              <!-- <td><img class="image" src="image/tea2.jpg" alt=""></td> -->
+              <td><img class="image" th:src="@{images/tea2.jpg}" alt="" /></td>
+
+              <td contenteditable="false">2</td>
+              <td contenteditable="false">文山包種茶</td>
+              <td contenteditable="false">43000 包</td>
+              <td contenteditable="false">＄60</td>
+              <td contenteditable="false">＄20</td>
+              <td>
+                <button class="editBtn" onclick="toggleEditMode(this)">
+                  編輯
+                </button>
+              </td>
+            </tr>
+
+            <tr>
+              <!-- <td><img class="image" src="image/tea3.jpg" alt=""></td> -->
+              <td><img class="image" th:src="@{images/tea3.jpg}" alt="" /></td>
+              <td contenteditable="false">3</td>
+              <td contenteditable="false">東方美人茶</td>
+              <td contenteditable="false">1000 包</td>
+              <td contenteditable="false">＄60</td>
+              <td contenteditable="false">＄20</td>
+              <td>
+                <button class="editBtn" onclick="toggleEditMode(this)">
+                  編輯
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--     </div>
+    </div> -->
+    <!-- inventory section end -->
+
+    <!-- schedule section start -->
+    <section class="schedule uk-background-cover" id="schedule">
+      <div class="heading">
+        <h1>種植排程</h1>
+      </div>
+      <div
+        class="uk-margin-small uk-card uk-card-default uk-card-body uk-container uk-container-small"
+      >
+        <div class="uk-margin-small uk-card uk-card-default uk-card-body">
+          <h3>種植狀況</h3>
+          <!-- 種植狀況資料-->
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>茶種</th>
+                <th>種植面積</th>
+                <th>播種日期</th>
+                <th>預計收成日期</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td contenteditable="false">青心烏龍茶</td>
+                <td contenteditable="false">3000 平方公里</td>
+                <td contenteditable="false">03/26</td>
+                <td contenteditable="false">11/03</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td>2</td>
+                <td contenteditable="false">文山包種茶</td>
+                <td contenteditable="false">2500 平方公里</td>
+                <td contenteditable="false">07/31</td>
+                <td contenteditable="false">10/25</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td contenteditable="false">東方美人茶</td>
+                <td contenteditable="false">2200 平方公里</td>
+                <td contenteditable="false">11/15</td>
+                <td contenteditable="false">05/11</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br /><br />
+        <div class="uk-margin-small uk-card uk-card-default uk-card-body">
+          <h3>生長情況</h3>
+          <!-- 生長情況<資料-->
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>茶種</th>
+                <th>第 1 ~ 10 天</th>
+                <th>第 11 ~ 20 天</th>
+                <th>第 21 ~ 30 天</th>
+                <th>第 31 ~ 40 天</th>
+                <th>第 41 ~ 50 天</th>
+                <th>50 天 +</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td contenteditable="false">青心烏龍茶</td>
+                <td contenteditable="false">很好。</td>
+                <td contenteditable="false">完美。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td>2</td>
+                <td contenteditable="false">文山包種茶</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td>3</td>
+                <td contenteditable="false">東方美人茶</td>
+                <td contenteditable="false">完美。</td>
+                <td contenteditable="false">須留意。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td contenteditable="false">死亡。</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br /><br />
+        <div class="uk-margin-small uk-card uk-card-default uk-card-body">
+          <h3>處理階段</h3>
+          <!-- 處理階段資料-->
+          <br />
+          <label for="datepicker">選擇日期：</label>
+          <input type="date" id="datepicker" name="datepicker" />
+          <script>
+            const today = new Date().toISOString().split("T")[0];
+
+            document.getElementById("datepicker").value = today;
+          </script>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>茶種</th>
+                <th>上個階段</th>
+                <th>目前階段</th>
+                <th>下個階段</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td contenteditable="false">青心烏龍茶</td>
+                <td contenteditable="false">播種完畢</td>
+                <td contenteditable="false">種植中</td>
+                <td contenteditable="false">準備收成</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td contenteditable="false">文山包種茶</td>
+                <td contenteditable="false">種植完畢</td>
+                <td contenteditable="false">收成中</td>
+                <td contenteditable="false">準備修剪</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td contenteditable="false">東方美人茶</td>
+                <td contenteditable="false">修剪完畢</td>
+                <td contenteditable="false">包裝中</td>
+                <td contenteditable="false">準備運送</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- schedule section end -->
+
+    <!-- order section start -->
+    <section class="uk-background-cover uk-margin-large" id="order">
+      <div class="heading">
+        <h1>訂單</h1>
+        <div
+          class="uk-margin-small uk-card uk-card-default uk-card-body uk-container uk-container-small"
+        >
+          <table id="myTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>顧客名稱</th>
+                <th>青心烏龍茶 ＄50/一包</th>
+                <th>文山包種茶 ＄70/一包</th>
+                <th>東方美人茶 ＄60/一包</th>
+                <th>總金額</th>
+                <th>聯絡確認</th>
+                <th>編輯</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td contenteditable="false">John Doe</td>
+                <td contenteditable="false">50 包</td>
+                <td contenteditable="false">30 包</td>
+                <td contenteditable="false">70 包</td>
+                <td contenteditable="false">＄8800</td>
+                <td contenteditable="false">12/15 聯絡</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td contenteditable="false">Andy Lee</td>
+                <td contenteditable="false">40 包</td>
+                <td contenteditable="false">80 包</td>
+                <td contenteditable="false">10 包</td>
+                <td contenteditable="false">＄8200</td>
+                <td contenteditable="false">尚未聯絡</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td contenteditable="false">Alice Johnson</td>
+                <td contenteditable="false">10 包</td>
+                <td contenteditable="false">50 包</td>
+                <td contenteditable="false">90 包</td>
+                <td contenteditable="false">＄9400</td>
+                <td contenteditable="false">12/11 聯絡</td>
+                <td>
+                  <button class="editBtn" onclick="toggleEditMode(this)">
+                    編輯
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <script>
+          function toggleEditMode(button) {
+            var row = button.closest("tr");
+            var cells = row.querySelectorAll("td:not(:last-child)");
+
+            cells.forEach(function (cell) {
+              var isEditable = cell.getAttribute("contenteditable") === "true";
+              cell.contentEditable = !isEditable;
+            });
+
+            if (button.textContent === "編輯") {
+              button.textContent = "儲存";
+              button.className = "saveBtn";
+            } else {
+              button.textContent = "編輯";
+              button.className = "editBtn";
+            }
+          }
+        </script>
+
+        <!-- 1224 加入"新增訂單功能" -->
+        <br /><br />
+        <div>
+          <button class="addOrder" onclick="openForm()">新增訂單</button>
+          <div id="myModal">
+            <div class="close-container">
+              <span button class="close" onclick="closeForm()">&times;</span>
+            </div>
+            <form>
+              <label for="name">ID : </label>
+              <input type="textarea" id="id" name="id" />
+              <br /><br />
+              <label for="name">顧客名稱 : </label>
+              <input type="text" id="name" name="name" />
+              <br /><br />
+              <label for="name">青心烏龍茶之訂購量 : </label>
+              <input type="text" id="tea1Q" name="tea1Q" />
+              <br /><br />
+              <label for="name">文山包種茶之訂購量 : </label>
+              <input type="text" id="tea2Q" name="tea2Q" />
+              <br /><br />
+              <label for="name">東方美人茶之訂購量 : </label>
+              <input type="text" id="tea3Q" name="tea3Q" />
+              <br /><br />
+
+              <input type="submit" id="submit" value="上傳" />
+            </form>
+          </div>
+          <script>
+            function openForm() {
+              document.getElementById("myModal").style.display = "block";
+            }
+
+            function closeForm() {
+              document.getElementById("myModal").style.display = "none";
+            }
+          </script>
+        </div>
+      </div>
+      <!-- 1224 加入"新增訂單功能" -->
+    </section>
+    <!-- order section end -->
+
+    <!-- Customer anlaysis section start -->
+    <section class="uk-background-cover" id="cust-analysis">
+      <div class="heading">
+        <h1>顧客分析</h1>
+      </div>
+      <div
+        class="uk-margin-small uk-card uk-card-default uk-card-body uk-container uk-container-small"
+      >
+        <!-- 顧客終身價值 Box -->
+        <div
+          class="uk-margin-small uk-card uk-card-default uk-card-body"
+          id="cust-clv"
+        >
+          <h3>終身價值</h3>
+          <div class="box-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>CLV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>John Doe</td>
+                  <td>$500</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Jane Smith</td>
+                  <td>$750</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Alice Johnson</td>
+                  <td>$600</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- 顧客年齡分佈 Box -->
+        <div
+          class="uk-margin-small uk-card uk-card-default uk-card-body"
+          id="cust-age"
+        >
+          <h2>年齡分佈</h2>
+          <div id="age-barchart" style="width: 700px; height: 500px"></div>
+        </div>
+        <!-- 顧客地區分佈 Box -->
+        <div
+          class="uk-margin-small uk-card uk-card-default uk-card-body"
+          id="cust-location"
+        >
+          <h2>地區分佈</h2>
+          <div id="location-piechart" style="width: 700px; height: 500px"></div>
+        </div>
+      </div>
+    </section>
+    <!-- cust analysis section end -->
+
+    <!-- sale anlaysis section start -->
+    <section class="sale-analysis" id="sale-analysis">
+      <div class="heading">
+        <h1>銷售分析</h1>
+      </div>
+      <div class="box-container">
+        <!-- 年銷售額 Box -->
+        <div class="box" id="annual-sales-box">
+          <h2>年銷售額</h2>
+          <div id="annual_chart" style="width: 800px; height: 500px"></div>
+        </div>
+        <!-- 季銷售額 Box -->
+        <div class="box" id="quart-sales-box">
+          <h2>季銷售額</h2>
+          <div id="quart_chart" style="width: 800px; height: 500px"></div>
+        </div>
+
+        <!-- 月銷售額 Box -->
+        <div class="box" id="month-sales-box">
+          <h2>月銷售額</h2>
+          <div id="month_chart" style="width: 800px; height: 500px"></div>
+        </div>
+      </div>
+    </section>
+    <!-- sale analysis section end -->
+
+    <!-- cust info section start -->
+    <section class="uk-background-cover" id="cust-info">
+      <div class="heading">
+        <h1>顧客資料查詢</h1>
+        <div
+          class="uk-margin-small uk-card uk-card-default uk-card-body uk-container-small uk-container"
+        >
+          <div class="uk-margin">
+            <form class="uk-search uk-search-default">
+              <a href="" class="uk-search-icon-flip" uk-search-icon></a>
+              <input
+                class="uk-search-input"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+            </form>
+          </div>
+          <button
+            onclick="loadCustomerData()"
+            class="uk-button uk-button-default"
+          >
+            加載顧客資料
+          </button>
+
+          <script>
+            function loadCustomerData() {
+              fetch("/customer/all")
+                .then((response) => response.json())
+                .then((customers) => {
+                  const tableBody = document.querySelector(
+                    "#cust-info table tbody"
+                  );
+                  tableBody.innerHTML = ""; // 清空表格
+
+                  customers.forEach((customer) => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+        	                  <td>${customer.customerID}</td>
+        	                  <td>${customer.cName}</td>
+        	                  <td>${customer.cage}</td>
+        	                  <td>${customer.address}</td>
+        	                  <td>${customer.cPhoneNum}</td>
+        	                  <td>${customer.lastPurchaseDate}</td>
+        	                  <td>${customer.clv}</td>
+        	              `;
+
+                    tableBody.appendChild(row);
+                  });
+                })
+                .catch((error) => console.error("Error:", error));
+            }
+          </script>
+
+          <div class="uk-margin-small uk-card uk-card-default uk-card-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>Location</th>
+                  <th>Phone Number</th>
+                  <th>Recency</th>
+                  <th>CLV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="customer : ${customers}">
+                  <td th:text="${customer.customerId}"></td>
+                  <td th:text="${customer.name}"></td>
+                  <td th:text="${customer.age}"></td>
+                  <td th:text="${customer.address}"></td>
+                  <td th:text="${customer.phoneNumber}"></td>
+                  <td th:text="${customer.lastPurchaseDate}"></td>
+                  <td th:text="${customer.clv}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <hr class="uk-divider-icon" />
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+  </body>
+  <footer class="">
+    <p class="uk-text-small uk-text-muted">嘉義茶農 管理系統</p>
+  </footer>
+</html>

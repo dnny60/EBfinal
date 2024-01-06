@@ -1,0 +1,492 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem;
+}
+.btn {
+  background-color: #fff;
+  text-transform: uppercase;
+  padding: 1rem 3rem;
+  color: #000;
+  position: relative;
+  cursor: pointer;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background-color: #fff;
+  z-index: 0;
+  transition: all 0.3s cubic-bezier(0.78, 0.2, 0.21, 0.88), color 0s;
+  transform: translate3d(5px, 5px, 0);
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  z-index: 0;
+  transition: all 0.3s cubic-bezier(0.78, 0.2, 0.21, 0.88), color 0s;
+  transform: translate3d(5px, 5px, 0);
+}
+.heading {
+  text-align: center;
+  text-transform: capitalize;
+}
+.heading h1 {
+  position: relative;
+  line-height: 1.5;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+.heading h1::before {
+  position: absolute;
+  content: "";
+  left: 47%;
+  width: 100px;
+  height: 2px;
+  background: #75b263;
+  bottom: -1%;
+}
+header .navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 30px #ccc;
+  z-index: 100;
+  padding: 1rem 0;
+}
+
+header .navbar ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+header .navbar ul li {
+  margin: 0 1rem;
+}
+
+header .navbar ul li a {
+  font-size: 1.3rem;
+  text-transform: capitalize;
+  color: #000;
+  padding: 1rem;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+header .navbar ul li a:hover,
+header .icons i:hover {
+  color: #75b263;
+  background-color: #f4f4f4;
+}
+
+header .icons {
+  display: flex;
+}
+header .icons i {
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin: 0.3rem;
+  color: #000;
+}
+header .bx-menu {
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin: 0.3rem;
+  color: #000;
+  display: none;
+}
+.slider-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  margin-bottom: 5rem;
+}
+.slider-container .slideBox {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: 0.5s;
+}
+.slideBox.active {
+  opacity: 1;
+}
+.slider-container .slideBox .textBox {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  text-align: center;
+}
+.slider-container .slideBox .textBox h1 {
+  font-size: 3rem;
+  color: #fff;
+  text-transform: capitalize;
+  margin-bottom: 2rem;
+}
+.slider-container .slideBox .textBox p {
+  font-size: 16px;
+  color: lightgray;
+  margin-bottom: 2rem;
+}
+.slider-container .slideBox .imgBox img {
+  width: 100%;
+  height: 100vh;
+}
+
+.inventory {
+  display: grid;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 6% 4%;
+}
+
+.inventory .box {
+  margin: 1rem;
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.inventory .box .img-box {
+  overflow: hidden;
+  margin-right: 5%;
+}
+
+.inventory .box img {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  transition: 0.5s;
+  border: 2px dashed #75b263;
+  padding: 0.4rem;
+  margin-right: 50%;
+}
+
+.inventory .box h2 {
+  margin-top: 1rem;
+  margin-right: 50%;
+}
+span {
+  text-align: left;
+  margin-left: -50%;
+}
+
+.inventory .box-container {
+  display: flex; /* Adjusted here */
+  flex-wrap: wrap; /* Added for responsiveness */
+  align-items: center;
+  justify-content: center;
+  gap: 2rem; /* Adjust the gap between items */
+  padding: 5%; /* Adjusted here */
+}
+.inventory span {
+  width: 100%;
+  text-align: center;
+}
+.inventory .box-container .box {
+  background-color: #75b26311;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 10px;
+  margin: 2rem;
+  cursor: pointer;
+  line-height: 1.5;
+  transition: 0.5s;
+  position: relative;
+}
+.inventory .box-container .box::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  background-color: #75b263;
+}
+.inventory .box-container .box .price {
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  font-size: 2rem;
+  color: #75b263;
+  font-weight: bold;
+}
+.inventory .box-container .box .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+}
+.inventory .box-container .box .title p {
+  font-size: 1.5rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  color: #75b263;
+}
+.inventory .box-container .box .icons i {
+  margin-top: -7rem;
+}
+.inventory .box-container .box .icons i {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #fff;
+  background-color: #75b263;
+  border-radius: 50%;
+  transition: 0.5s;
+}
+.inventory .box-container .box .icons i:hover {
+  border: 1px solid #75b263;
+  background-color: #75b26311;
+  color: #75b263;
+}
+.inventory .box-container .box img {
+  width: 100%;
+}
+.schedule,
+.cust-analysis,
+.cust-info {
+  padding: 4% 6%;
+  background-color: #ffffff;
+  background-size: cover;
+  min-height: 100vh;
+}
+.order,
+.sale-analysis {
+  padding: 4% 6%;
+  background-color: #ffffff;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+.cust-info .heading {
+  justify-content: space-between;
+  align-items: center;
+}
+.search-bar {
+  align-items: center;
+}
+.search-bar input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.search-bar button {
+  padding: 0.5rem 1rem;
+}
+
+#cust-clv {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding-bottom: 50px;
+}
+#cust-age,
+#cust-location {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  padding-bottom: 50px;
+}
+.age-piechart .location-piechart {
+  margin: auto 0;
+}
+
+#annual-sales-box,
+#quart-sales-box,
+#month-sales-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 50px;
+}
+
+.annual_chart .quart_chart .month_chart {
+  margin: auto 0;
+}
+
+.teaIcon {
+  width: 10%;
+  height: 10%;
+}
+
+.editIcon {
+  width: 10%;
+  height: 10%;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  margin-right: 5%;
+}
+
+/* 1224 加入"新增訂單功能" */
+#myModal,
+#myModal1 {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #ccc;
+  padding: 30px;
+  background-color: #efdb9f;
+  z-index: 1;
+  font-size: 20px;
+}
+
+#id,
+#tea1Q,
+#tea2Q,
+#tea3Q,
+#q,
+#price1,
+#price2 {
+  width: 50px;
+}
+
+#name {
+  width: 150px;
+}
+
+#id,
+#name,
+#tea1Q,
+#tea2Q,
+#tea3Q,
+#q,
+#price1,
+#price2 {
+  text-align: center;
+  height: 25px;
+}
+
+input[type="submit"] {
+  background-color: #759f50;
+  color: white;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #046208;
+}
+
+.close-container {
+  position: relative;
+}
+
+.close:hover {
+  background-color: #aa0000;
+  color: #fff;
+}
+
+.close {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgb(233, 89, 89);
+  color: white;
+}
+
+.addOrder,
+.addInvetory {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.addOrder:hover {
+  background-color: #2980b9;
+}
+
+/* 1224 加入"新增訂單功能" */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.editBtn,
+.saveBtn {
+  width: 60px;
+  height: 30px;
+  cursor: pointer;
+  background-color: #e1c76e;
+  color: white;
+}
+
+.saveBtn {
+  background-color: green;
+  color: white;
+}
