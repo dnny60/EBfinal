@@ -21,24 +21,27 @@ public class Inventory {
 
     private BigDecimal InvQuantity;
 
-    private BigDecimal InvAmount;
     
-    private BigDecimal InvPrice;
+    private BigDecimal TotalInvValue;
+    
+    private BigDecimal InvretailPrice;
     
     
-    public void setInvAmount(BigDecimal invAmount) {
-		InvAmount = invAmount;
-	}
+    
     public void setInvDate(Date invDate) {
 		InvDate = invDate;
 	}
     
-    public void setInvPrice(BigDecimal invPrice) {
-		InvPrice = invPrice;
-	}
     public void setInvQuantity(BigDecimal invQuantity) {
-		InvQuantity = invQuantity;
-	}
+        this.InvQuantity = invQuantity;
+        calculateTotalInvValue();
+    }
+
+    public void setInvretailPrice(BigDecimal invretailPrice) {
+        this.InvretailPrice = invretailPrice;
+        calculateTotalInvValue();
+    }
+
     public void setInvID(Long invID) {
 		InvID = invID;
 	}
@@ -46,14 +49,12 @@ public class Inventory {
 		this.tea = tea;
 	}
     
-    public BigDecimal getInvAmount() {
-		return InvAmount;
-	}
+
     public Date getInvDate() {
 		return InvDate;
 	}
-    public BigDecimal getInvPrice() {
-		return InvPrice;
+    public BigDecimal getTotalInvValue() {
+		return TotalInvValue;
 	}
     public BigDecimal getInvQuantity() {
 		return InvQuantity;
@@ -65,6 +66,16 @@ public class Inventory {
 		return tea;
 	}
     
+    public BigDecimal getInvretailPrice() {
+		return InvretailPrice;
+	}
     
+    
+    public void calculateTotalInvValue() {
+        if (this.InvQuantity != null && this.InvretailPrice != null) {
+            this.TotalInvValue = this.InvQuantity.multiply(this.InvretailPrice);
+        }
+    }
+
 
 }

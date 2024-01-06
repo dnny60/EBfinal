@@ -24,7 +24,6 @@ public class Tea {
     
     private String TeaName;
     
-    private BigDecimal UnitPrice;
     
     private Integer TeaSpan;
 
@@ -46,13 +45,6 @@ public class Tea {
         this.TeaName = TeaName;
     }
 
-    public BigDecimal getUnitPrice() {
-        return UnitPrice;
-    }
-
-    public void setUnitPrice(BigDecimal UnitPrice) {
-        this.UnitPrice = UnitPrice;
-    }
 
     public Integer getTeaSpan() {
         return TeaSpan;

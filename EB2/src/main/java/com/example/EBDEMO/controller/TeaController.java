@@ -32,7 +32,7 @@ public class TeaController {
 	
 	@PostMapping(path="/add")
 	public @ResponseBody String addNewTea (@RequestParam String TeaName
-		      , @RequestParam BigDecimal UnitPrice, @RequestParam Integer TeaSpan) {
+		      , @RequestParam Integer TeaSpan) {
 		    
 		
 		// @ResponseBody means the returned String is the response, not a view name
@@ -40,7 +40,6 @@ public class TeaController {
 
 		    Tea n = new Tea();
 		    n.setTeaName(TeaName);
-		    n.setUnitPrice(UnitPrice);
 		    n.setTeaSpan(TeaSpan);
 		    teaRepository.save(n);
 		    return "Saved";
@@ -66,7 +65,7 @@ public class TeaController {
     @PutMapping("/update/{id}")
     public @ResponseBody Tea updateInventory(@PathVariable Long id
     		, @RequestParam String TeaName
-    		, @RequestParam BigDecimal UnitPrice, @RequestParam Integer TeaSpan ) {
+    		, @RequestParam Integer TeaSpan ) {
     	
 
         Tea tea = teaRepository.findById(id)
@@ -76,7 +75,7 @@ public class TeaController {
         // Update the order attributes
         tea.setTeaName(TeaName);
         tea.setTeaSpan(TeaSpan);
-        tea.setUnitPrice(UnitPrice);
+  
 
         return teaRepository.save(tea);
     }

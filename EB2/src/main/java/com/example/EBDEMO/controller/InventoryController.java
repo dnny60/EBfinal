@@ -49,7 +49,8 @@ public class InventoryController {
     public @ResponseBody String createInventory(@RequestParam Long teaid
     		, @RequestParam BigDecimal InvQuantity
     		, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date InvDate
-    		, @RequestParam BigDecimal InvAmount, @RequestParam BigDecimal InvPrice ) {
+    		, @RequestParam BigDecimal InvretailPrice
+    		 ) {
     	
     	
     	Tea tea = teaRepository.findById(teaid)
@@ -57,8 +58,7 @@ public class InventoryController {
     	
     	Inventory inventory = new Inventory();
     	inventory.setTea(tea);
-    	inventory.setInvAmount(InvAmount);
-    	inventory.setInvPrice(InvPrice);
+    	inventory.setInvretailPrice(InvretailPrice);
     	inventory.setInvQuantity(InvQuantity);
     	inventory.setInvDate(InvDate);
 		inventoryRepository.save(inventory);
@@ -68,30 +68,41 @@ public class InventoryController {
     
     
  // Update an existing inventory
-    @PutMapping("/update/{id}")
-    public @ResponseBody Inventory updateInventory(@PathVariable Long id
-    		,@RequestParam Long teaid
-    		, @RequestParam BigDecimal InvQuantity
-    		, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date InvDate
-    		, @RequestParam BigDecimal InvAmount, @RequestParam BigDecimal InvPrice ) {
-    	
-        Inventory inventory = inventoryRepository.findById(id)
-        		.orElseThrow((() -> new EntityNotFoundException("Inventory not found with id " + id)));
-        
-        Tea tea = teaRepository.findById(teaid)
-        		.orElseThrow(() -> new EntityNotFoundException("Tea not found with id " + teaid));
-        
-        
-        // Update the order attributes
-        inventory.setInvAmount(InvAmount);
-        inventory.setInvPrice(InvPrice);
-        inventory.setInvQuantity(InvQuantity);
-        inventory.setTea(tea);
-        inventory.setInvDate(InvDate);
+//    @PutMapping("/update/{id}")
+//    public @ResponseBody Inventory updateInventory(@PathVariable Long id
+//    		,@RequestParam Long teaid
+//    		, @RequestParam BigDecimal InvQuantity
+//    		, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date InvDate
+//    		, @RequestParam BigDecimal InvretailPrice ) {
+//    	
+//        Inventory inventory = inventoryRepository.findById(id)
+//        		.orElseThrow((() -> new EntityNotFoundException("Inventory not found with id " + id)));
+//        
+//        Tea tea = teaRepository.findById(teaid)
+//        		.orElseThrow(() -> new EntityNotFoundException("Tea not found with id " + teaid));
+//        
+//        
+//        // Update the order attributes
+//        inventory.setInvretailPrice(InvretailPrice);
+//        inventory.setInvQuantity(InvQuantity);
+//        inventory.setTea(tea);
+//        inventory.setInvDate(InvDate);
+//
+//        return inventoryRepository.save(inventory);
+//    }
 
-        return inventoryRepository.save(inventory);
+    @PostMapping("/update/{id}")
+    public String updateInventory(@PathVariable Long id, @RequestParam BigDecimal invQuantity, @RequestParam BigDecimal invretailPrice) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id " + id));
+        inventory.setInvQuantity(invQuantity);
+        inventory.setInvretailPrice(invretailPrice);
+        inventoryRepository.save(inventory);
+        return "redirect:/"; // 重定向到显示所有库存的页面
     }
 
+    
+    
     // Delete an Inventory
     @DeleteMapping("/delete/{id}")
     public @ResponseBody ResponseEntity<?> deleteInventory(@PathVariable Long id) {

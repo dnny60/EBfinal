@@ -58,8 +58,7 @@
             <h1>嘉義茶農 管理系統</h1>
           </div>
           <div class="imgBox">
-            <!--                     <img src="image/slider.webp" alt="">
- -->
+            <!--                     <img src="image/slider.webp" alt=""> -->
             <img th:src="@{images/slider.webp}" alt="" />
           </div>
         </div>
@@ -73,128 +72,81 @@
         <h1>庫存管理</h1>
       </div>
 
-      <div class="uk-margin-small uk-card uk-card-default uk-card-body">
-        <div>
-          <label for="datepicker1">選擇日期：</label>
-          <input type="date" id="datepicker1" name="datepicker1" />
-        </div>
+      <table>
+        <thead>
+          <tr>
+            <th>圖片</th>
+            <th>ID</th>
+            <th>茶種</th>
+            <th>庫存量</th>
+            <th>零售價</th>
+            <th>總庫存價值</th>
+            <th>編輯</th>
+          </tr>
+        </thead>
+        <tbody th:each="inventory, iterStat : ${inventories}">
+          <tr>
+            <!-- Existing Inventory Row -->
+            <td>
+              <img
+                class="image"
+                th:src="@{'/images/' + ${inventory?.tea?.teaID} + '.jpg'}"
+                alt="Tea Image"
+              />
+            </td>
+            <td th:text="${inventory.tea.teaID}"></td>
+            <td th:text="${inventory.tea.teaName}"></td>
+            <td th:text="${inventory.invQuantity}"></td>
+            <td th:text="'＄' + ${inventory.invretailPrice}"></td>
+            <td th:text="'＄' + ${inventory.totalInvValue}"></td>
+            <td>
+              <button
+                class="editBtn"
+                type="button"
+                th:onclick="showEditForm([[${iterStat.index}]])"
+              >
+                編輯
+              </button>
+            </td>
+          </tr>
 
-        <script>
-          const today1 = new Date().toISOString().split("T")[0];
-          document.getElementById("datepicker1").value = today1;
-        </script>
-
-        <table>
-          <thead>
-            <tr>
-              <th>圖片</th>
-              <th>ID</th>
-              <th>茶種</th>
-              <th>庫存量</th>
-              <th>零售價</th>
-              <th>批發價</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <!--  <td><img class="image" src="image/ulong.jpg" alt=""></td> -->
-              <td><img class="image" th:src="@{images/ulong.jpg}" alt="" /></td>
-              <td>1</td>
-              <td contenteditable="false" edit="tdisable" id="productName">
-                青心烏龍茶
-              </td>
-              <td contenteditable="false" id="quantity">50000 包</td>
-              <td contenteditable="false" id="price">＄50</td>
-              <td contenteditable="false" id="discount">＄30</td>
-              <td>
+          <!-- Hidden Edit Form Row -->
+          <tr
+            th:id="'editForm-' + ${iterStat.index}"
+            style="display: none"
+            th:if="${inventories}"
+          >
+            <td colspan="7">
+              <form
+                th:action="@{/inventory/update/{id}(id=${inventory?.tea?.teaID})}"
+                th:method="post"
+              >
+                <input
+                  type="number"
+                  name="invQuantity"
+                  placeholder="庫存量"
+                  required
+                />
+                <input
+                  type="number"
+                  name="invretailPrice"
+                  placeholder="零售價"
+                  required
+                />
+                <button class="editBtn" type="submit">完成</button>
                 <button
                   class="editBtn"
-                  onclick="toggleEditMode1(this)"
-                  id="sbt"
+                  type="button"
+                  th:onclick="hideEditForm([[${iterStat.index}]])"
                 >
-                  編輯
+                  放棄變更
                 </button>
-              </td>
-            </tr>
-
-            <script>
-              function toggleEditMode1(button) {
-                var row = button.closest("tr");
-                var cells = row.querySelectorAll("td:not(:last-child)");
-                cells.forEach(function (cell) {
-                  var isEditable =
-                    cell.getAttribute("contenteditable") === "true";
-                  cell.contentEditable = !isEditable;
-                });
-
-                if (button.textContent === "編輯") {
-                  button.textContent = "儲存";
-                  button.className = "saveBtn";
-                } else {
-                  button.textContent = "編輯";
-                  button.className = "editBtn";
-
-                  // Save the updated data
-                  saveUpdatedData(row);
-                }
-              }
-
-              function saveUpdatedData(row) {
-                // Get the updated values from the cells
-                var productName = row.querySelector("#productName").textContent;
-                var quantity = row.querySelector("#quantity").textContent;
-                var price = row.querySelector("#price").textContent;
-                var discount = row.querySelector("#discount").textContent;
-
-                // Perform any additional logic or send data to the server if needed
-                console.log("Product Name: " + productName);
-                console.log("Quantity: " + quantity);
-                console.log("Price: " + price);
-                console.log("Discount: " + discount);
-
-                if (quantity < 2000) {
-                  window.alert("請注意存貨!");
-                }
-              }
-            </script>
-
-            <tr>
-              <!-- <td><img class="image" src="image/tea2.jpg" alt=""></td> -->
-              <td><img class="image" th:src="@{images/tea2.jpg}" alt="" /></td>
-
-              <td contenteditable="false">2</td>
-              <td contenteditable="false">文山包種茶</td>
-              <td contenteditable="false">43000 包</td>
-              <td contenteditable="false">＄60</td>
-              <td contenteditable="false">＄20</td>
-              <td>
-                <button class="editBtn" onclick="toggleEditMode(this)">
-                  編輯
-                </button>
-              </td>
-            </tr>
-
-            <tr>
-              <!-- <td><img class="image" src="image/tea3.jpg" alt=""></td> -->
-              <td><img class="image" th:src="@{images/tea3.jpg}" alt="" /></td>
-              <td contenteditable="false">3</td>
-              <td contenteditable="false">東方美人茶</td>
-              <td contenteditable="false">1000 包</td>
-              <td contenteditable="false">＄60</td>
-              <td contenteditable="false">＄20</td>
-              <td>
-                <button class="editBtn" onclick="toggleEditMode(this)">
-                  編輯
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <!--     </div>
-    </div> -->
     <!-- inventory section end -->
 
     <!-- schedule section start -->
