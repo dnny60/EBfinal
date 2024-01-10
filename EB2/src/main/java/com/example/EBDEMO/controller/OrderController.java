@@ -18,6 +18,9 @@ import com.example.EBDEMO.Repository.CustomerRepository;
 import com.example.EBDEMO.Repository.OrderRepository;
 import com.example.EBDEMO.Repository.TeaRepository;
 
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
+
 
 @Controller
 @RequestMapping(path="/orders")
@@ -45,20 +48,82 @@ public class OrderController {
     }
 
     // Create a new order
+//    @PostMapping(path = "/add")
+//    public @ResponseBody String createOrder(@RequestParam Long teaid, @RequestParam Long customerid, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date odate, @RequestParam Integer oquantity, @RequestParam BigDecimal oamount ) {
+//    	Customer customer = customerRepository.findById(customerid)
+//    		    .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+//    	Tea tea = teaRepository.findById(teaid).orElseThrow(() -> new EntityNotFoundException("Tea not found"));
+//    	Order order = new Order();
+//    	order.setCustomer(customer);
+//		order.setTea(tea);
+//		order.setODate(odate);
+//		order.setOAmount(oamount);
+//		order.setOQuantity(oquantity);
+//		orderRepository.save(order);
+//	
+//		return "Saved";
+//    }
+    
+ // Create a new order
     @PostMapping(path = "/add")
-    public @ResponseBody String createOrder(@RequestParam Long teaid, @RequestParam Long customerid, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date odate, @RequestParam Integer oquantity, @RequestParam BigDecimal oamount ) {
-    	Customer customer = customerRepository.findById(customerid)
+    public String createOrder(
+    		@RequestParam Integer ulonTeaQuantity
+    		, @RequestParam Integer wenshanTeaQuantity
+    		, @RequestParam Integer beautyTeaQuantity
+    		, @RequestParam Long customerID
+    		
+    		) {
+    	Customer customer = customerRepository.findById(customerID)
     		    .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-    	Tea tea = teaRepository.findById(teaid).orElseThrow(() -> new EntityNotFoundException("Tea not found"));
-    	Order order = new Order();
-    	order.setCustomer(customer);
-		order.setTea(tea);
-		order.setODate(odate);
-		order.setOAmount(oamount);
-		order.setOQuantity(oquantity);
-		orderRepository.save(order);
+    	
+    	Long ulonteaID= (long) 13;
+    	Long wenshanTeaID= (long) 14;
+    	Long beautyTeaID= (long) 15;
+    	
+    	Tea ulonTea = teaRepository.findById(ulonteaID).orElseThrow(() -> new EntityNotFoundException("Tea not found"));
+    	Tea wenshanTea = teaRepository.findById(wenshanTeaID).orElseThrow(() -> new EntityNotFoundException("Tea not found"));
+    	Tea beautyTea = teaRepository.findById(beautyTeaID).orElseThrow(() -> new EntityNotFoundException("Tea not found"));
+    	
+    	Date date = new Date(); 
+    	if (ulonTeaQuantity != 0) {
+    		Order ulonTeaOrder = new Order();
+    		ulonTeaOrder.setCustomer(customer);
+    		ulonTeaOrder.setTea(ulonTea);
+			 
+			ulonTeaOrder.setODate(date);
+			ulonTeaOrder.setOQuantity(ulonTeaQuantity);
+			orderRepository.save(ulonTeaOrder);
+			System.out.print("ulonTEA SAVE!!");
+			
+		}
+    	
+    	if (wenshanTeaQuantity != 0) {
+    		Order wenshanTeaOrder = new Order();
+    		wenshanTeaOrder.setCustomer(customer);
+    		wenshanTeaOrder.setTea(wenshanTea);
+			  
+			wenshanTeaOrder.setODate(date);
+			wenshanTeaOrder.setOQuantity(wenshanTeaQuantity);
+			orderRepository.save(wenshanTeaOrder);
+			System.out.print("wenshanTeaOrder SAVE!!");
+		}
+    	
+    	if (wenshanTeaQuantity != 0) {
+    		Order beautyTeaOrder = new Order();
+    		beautyTeaOrder.setCustomer(customer);
+    		beautyTeaOrder.setTea(beautyTea);
+			
+			beautyTeaOrder.setODate(date);
+			beautyTeaOrder.setOQuantity(beautyTeaQuantity);
+			orderRepository.save(beautyTeaOrder);
+			System.out.print("beautyTeaOrder SAVE!!");
+		}
+    	
+    	customer.setLastPurchaseDate(date);
+    	customerRepository.save(customer);
+    	
 	
-		return "Saved";
+		return "redirect:/#order";
     }
 
     // Update an existing order

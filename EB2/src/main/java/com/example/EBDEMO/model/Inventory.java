@@ -27,7 +27,6 @@ public class Inventory {
     private BigDecimal InvretailPrice;
     
     
-    
     public void setInvDate(Date invDate) {
 		InvDate = invDate;
 	}

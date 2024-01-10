@@ -80,75 +80,92 @@ google.charts.load("current", { packages: ["bar"] });
 google.charts.setOnLoadCallback(drawAgeChart);
 
 function drawAgeChart() {
-  var data = google.visualization.arrayToDataTable([
-    ["年齡", "人數"],
-    ["0-9", 0],
-    ["10-19", 1],
-    ["20-24", 1],
-    ["25-29", 0],
-    ["30-34", 2],
-    ["35-39", 0],
-    ["40-44", 4],
-    ["45-49", 3],
-    ["50-54", 10],
-    ["55-59", 11],
-    ["60-64", 10],
-    ["65-69", 13],
-    ["70-74", 17],
-    ["75-79", 15],
-    ["80-84", 9],
-    ["85-89", 7],
-    ["90-94", 3],
-    ["95-99", 1],
-    ["100+", 0],
-  ]);
+  fetch("/customer/all")
+    .then((response) => response.json())
+    .then((customers) => {
+      var ageCount = {}; // 用于统计每个年龄的出现次数
 
-  var options = {
-    chart: {
-      title: "年齡分佈圖",
-    },
-    bars: "horizontal", // Required for Material Bar Charts.
-  };
+      // 统计每个年龄的出现次数
+      customers.forEach((customer) => {
+        if (ageCount[customer.cage]) {
+          ageCount[customer.cage] += 1;
+        } else {
+          ageCount[customer.cage] = 1;
+        }
+      });
 
-  var chart = new google.charts.Bar(document.getElementById("age-barchart"));
+      // 转换为 ageStatistics 数组的格式
+      var ageStatistics = [["年齡", "人數"]];
+      for (var age in ageCount) {
+        ageStatistics.push([age.toString(), ageCount[age]]);
+      }
 
-  chart.draw(data, google.charts.Bar.convertOptions(options));
+      console.log(ageStatistics);
+      console.log("after");
+
+      var data = google.visualization.arrayToDataTable(ageStatistics);
+
+      var options = {
+        chart: {
+          title: "年齡分佈圖",
+        },
+        vAxis: {
+          scaleType: "null",
+          title: "人數",
+          ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        },
+        bars: "vertical", // Required for Material Bar Charts.
+      };
+
+      var chart = new google.charts.Bar(
+        document.getElementById("age-barchart")
+      );
+
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    });
 }
+
 //pie chart for customer location disdribution
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawLocationChart);
 
 function drawLocationChart() {
-  var data = google.visualization.arrayToDataTable([
-    ["縣市", "人數"],
-    ["台北", 11],
-    ["新北", 2],
-    ["基隆", 2],
-    ["新竹", 2],
-    ["桃園", 7],
-    ["台中", 8],
-    ["苗栗", 9],
-    ["彰化", 2],
-    ["南投", 3],
-    ["雲林", 5],
-    ["高雄", 2],
-    ["台南", 4],
-    ["嘉義", 17],
-    ["屏東", 8],
-    ["澎湖", 9],
-    ["花蓮", 7],
-    ["台東", 9],
-  ]);
+  fetch("/customer/all")
+    .then((response) => response.json())
+    .then((customers) => {
+      var locationCount = {}; // 用于统计每个地区的客户数量
 
-  var options = {
-    title: "地區分佈圖",
-  };
+      // 统计每个地区的客户数量
+      customers.forEach((customer) => {
+        console.log(customer.address);
+        if (locationCount[customer.address]) {
+          locationCount[customer.address] += 1;
+        } else {
+          locationCount[customer.address] = 1;
+        }
+      });
 
-  var chart = new google.visualization.PieChart(
-    document.getElementById("location-piechart")
-  );
+      // 转换为 locationStatistics 数组的格式
+      var locationStatistics = [["縣市", "人數"]];
+      for (var location in locationCount) {
+        locationStatistics.push([location.toString(), locationCount[location]]);
+      }
 
-  chart.draw(data, options);
+      var data = google.visualization.arrayToDataTable(locationStatistics);
+
+      var options = {
+        title: "地區分佈圖",
+      };
+
+      var chart = new google.visualization.PieChart(
+        document.getElementById("location-piechart")
+      );
+
+      chart.draw(data, options);
+    })
+    .catch((error) => {
+      console.error("Error fetching customer data:", error);
+    });
 }
 
 let menu = document.querySelector(".bx-menu");
@@ -228,4 +245,54 @@ function showEditForm(index) {
 
 function hideEditForm(index) {
   document.getElementById("editForm-" + index).style.display = "none";
+}
+
+function toggleEditModeok(index) {
+  var editForm = document.getElementById("plantingDetailForm-" + index);
+  editForm.style.display =
+    editForm.style.display == "none" ? "table-row" : "none";
+}
+
+function toggleEditModeGrowthDetail(index) {
+  var editForm = document.getElementById("GrowthDetailForm-" + index);
+  editForm.style.display =
+    editForm.style.display == "none" ? "table-row" : "none";
+}
+
+function openForm() {
+  document.getElementById("myModal").style.display = "block";
+  loadCustomerDataDropList(); // 在打開表單時加載客戶數據
+}
+
+function closeForm() {
+  document.getElementById("myModal").style.display = "none";
+}
+
+function loadCustomerDataDropList() {
+  fetch("/customer/all")
+    .then((response) => {
+      console.log("Response: ", response[0]); // 打印完整的響應對象
+      return response.json();
+    })
+    .then((Customer) => {
+      const customerSelect = document.getElementById("customerSelect");
+      customerSelect.innerHTML = ""; // 清空下拉式選單中的既有選項
+      console.log("Customers: ", Customer); // 打印解析後的 JSON
+      Customer.forEach((Customer) => {
+        const option = document.createElement("option");
+        option.value = Customer.customerID;
+        option.textContent = Customer.cName;
+        customerSelect.appendChild(option);
+      });
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+function toggleCustomerForm() {
+  var formDiv = document.getElementById("customerFormDiv");
+  formDiv.style.display = formDiv.style.display === "none" ? "block" : "none";
+}
+
+function clearCustomerForm() {
+  document.getElementById("customerForm").reset();
 }

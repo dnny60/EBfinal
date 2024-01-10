@@ -1,5 +1,7 @@
 package com.example.EBDEMO.Repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
 import com.example.EBDEMO.model.Order;
@@ -8,5 +10,7 @@ import com.example.EBDEMO.model.Order;
 // CRUD refers Create, Read, Update, Delete
 
 public interface OrderRepository extends CrudRepository<Order, Long> {
+	
+	List<Order> findAllByOrderByODateAsc();
 
 }

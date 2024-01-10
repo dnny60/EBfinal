@@ -20,6 +20,102 @@
       type="text/javascript"
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
+
+    <script>
+      const stages = ["播種", "種植", "收成", "加工", "包裝", "運送"];
+      function updateStageFunction(button, direction) {
+        const row = button.closest("tr");
+        const detailId = row.cells[0].textContent; // 假设 ID 在第一个单元格
+        let currentStageIndex = stages.indexOf(row.cells[3].textContent); // 假设当前阶段在第四个单元格
+        console.log(row);
+
+        if (direction === "next" && currentStageIndex < stages.length - 1) {
+          sendStageUpdate(
+            detailId,
+            stages[currentStageIndex],
+            stages[currentStageIndex + 1],
+            stages[currentStageIndex + 2]
+          );
+        } else if (direction === "prev" && currentStageIndex > 0) {
+          sendStageUpdate(
+            detailId,
+            stages[currentStageIndex - 2],
+            stages[currentStageIndex - 1],
+            stages[currentStageIndex]
+          );
+        }
+      }
+
+      function updateTableWithNewData(
+        detailId,
+        previousStage,
+        currentStage,
+        nextStage
+      ) {
+        // 找到对应的表格行并更新内容
+        console.log(previousStage, currentStage, nextStage);
+        const row = document.getElementsByClassName(`detailID${detailId}`);
+        console.log(`tr[data-detail-id='${detailId}']`);
+        console.log(
+          document.getElementsByClassName(`previous-stage-cell${detailId}`)
+        );
+        let text = document.getElementsByClassName(
+          `previous-stage-cell${detailId}`
+        );
+        console.log(text[0].innerText);
+
+        document.getElementsByClassName(
+          `previous-stage-cell${detailId}`
+        )[0].innerText = previousStage;
+        document.getElementsByClassName(
+          `current-stage-cell${detailId}`
+        )[0].innerText = currentStage;
+        document.getElementsByClassName(
+          `next-stage-cell${detailId}`
+        )[0].innerText = nextStage;
+
+        // 其他任何需要更新的内容
+      }
+
+      function sendStageUpdate(
+        detailId,
+        newPreviousStage,
+        newCurrentStage,
+        newNextStage
+      ) {
+        fetch(`/plantingDetail/updateStage/${detailId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            previousStage: newPreviousStage,
+            currentStage: newCurrentStage,
+            nextStage: newNextStage,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // 检查是否更新成功
+            if (data.success) {
+              // 更新页面内容
+              // 例如，更新表格中的数据
+              updateTableWithNewData(
+                detailId,
+                data.previousStage,
+                data.currentStage,
+                data.nextStage
+              );
+            } else {
+              // 错误处理
+              console.error("Update failed");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
     <script type="text/javascript" th:src="@{/script.js/}"></script>
 
     <title>嘉義茶農</title>
@@ -171,44 +267,62 @@
                 <th>操作</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody th:each="detailDTO, iterStat : ${plantingDetailDTOs}">
               <tr>
-                <td>1</td>
-                <td contenteditable="false">青心烏龍茶</td>
-                <td contenteditable="false">3000 平方公里</td>
-                <td contenteditable="false">03/26</td>
-                <td contenteditable="false">11/03</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
-                </td>
-              </tr>
+                <td th:text="${detailDTO.plantingDetail.plantingDetailID}"></td>
+                <td th:text="${detailDTO.plantingDetail.tea.teaName}"></td>
+                <td th:text="${detailDTO.plantingDetail.plantArea}"></td>
+                <td
+                  th:text="${#dates.format(detailDTO.plantingDetail.plantDate, 'MM/dd/yyyy')}"
+                ></td>
+                <td
+                  th:text="${#dates.format(detailDTO.estimatedHarvestDate, 'MM/dd/yyyy')}"
+                ></td>
 
-              <tr>
-                <td>2</td>
-                <td contenteditable="false">文山包種茶</td>
-                <td contenteditable="false">2500 平方公里</td>
-                <td contenteditable="false">07/31</td>
-                <td contenteditable="false">10/25</td>
                 <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
+                  <button
+                    class="editBtn"
+                    th:onclick="'toggleEditModeok(' + ${iterStat.index} + ')'"
+                  >
                     編輯
                   </button>
                 </td>
               </tr>
-              <tr>
-                <td>3</td>
-                <td contenteditable="false">東方美人茶</td>
-                <td contenteditable="false">2200 平方公里</td>
-                <td contenteditable="false">11/15</td>
-                <td contenteditable="false">05/11</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
+              <!-- Hidden Edit Form Row -->
+              <tr
+                th:id="'plantingDetailForm-' + ${iterStat.index}"
+                style="display: none"
+                th:if="${inventories}"
+              >
+                <td colspan="7">
+                  <form
+                    th:action="@{/plantingDetail/update/{id}(id=${detailDTO?.plantingDetail?.PlantingDetailID})}"
+                    th:method="post"
+                  >
+                    <input
+                      type="number"
+                      name="plantArea"
+                      placeholder="種植面積"
+                      required
+                    />
+                    <input
+                      type="date"
+                      name="plantDate"
+                      placeholder="播種日期"
+                      required
+                    />
+                    <button class="editBtn" type="submit">完成</button>
+                    <button
+                      type="button"
+                      class="editBtn"
+                      th:onclick="'toggleEditModeok(' + ${iterStat.index} + ')'"
+                    >
+                      放棄變更
+                    </button>
+                  </form>
                 </td>
               </tr>
+              <!-- ... -->
             </tbody>
           </table>
         </div>
@@ -230,69 +344,119 @@
                 <th>操作</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody th:each="detailDTO, iterStat : ${plantingDetailDTOs}">
               <tr>
-                <td>1</td>
-                <td contenteditable="false">青心烏龍茶</td>
-                <td contenteditable="false">很好。</td>
-                <td contenteditable="false">完美。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
+                <td th:text="${detailDTO.plantingDetail.plantingDetailID}"></td>
+                <td th:text="${detailDTO.plantingDetail.tea.teaName}"></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.firstTenDay} ?: '尚未輸入'"
+                ></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.secondTenDay} ?: '尚未輸入'"
+                ></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.thridTenDay} ?: '尚未輸入'"
+                ></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.fourthTenDay} ?: '尚未輸入'"
+                ></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.fifthTenDay} ?: '尚未輸入'"
+                ></td>
+                <td
+                  th:text="${detailDTO.plantingDetail.aboveFifttyDay} ?: '尚未輸入'"
+                ></td>
                 <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
+                  <button
+                    class="editBtn"
+                    th:onclick="'toggleEditModeGrowthDetail(' + ${iterStat.index} + ')'"
+                  >
                     編輯
                   </button>
                 </td>
               </tr>
+              <!-- Hidden Edit Form Row -->
+              <tr
+                th:id="'GrowthDetailForm-' + ${iterStat.index}"
+                style="display: none"
+                th:if="${inventories}"
+              >
+                <td colspan="1"></td>
+                <td colspan="1"></td>
+                <td colspan="7">
+                  <form
+                    th:action="@{/plantingDetail/updateGrowth/{id}(id=${detailDTO?.plantingDetail?.PlantingDetailID})}"
+                    th:method="post"
+                  >
+                    <!-- Dropdowns for each ten-day period -->
+                    <select name="firstTenDay">
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
+                    <select name="secondTenDay">
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
+                    <select name="thridTenDay">
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
+                    <select name="fourthTenDay">
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
+                    <select name="fifthTenDay">
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
 
-              <tr>
-                <td>2</td>
-                <td contenteditable="false">文山包種茶</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
-                </td>
-              </tr>
+                    <!-- ... Add similar dropdowns for other ten-day periods -->
+                    <select name="aboveFifttyDay">
+                      <!-- Similar options for aboveFifttyDay -->
+                      <option value="良好">良好</option>
+                      <option value="完美">完美</option>
+                      <option value="不良">不良</option>
+                      <option value="死亡">死亡</option>
+                      <option value="尚未輸入">尚未輸入</option>
+                    </select>
 
-              <tr>
-                <td>3</td>
-                <td contenteditable="false">東方美人茶</td>
-                <td contenteditable="false">完美。</td>
-                <td contenteditable="false">須留意。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td contenteditable="false">死亡。</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
+                    <!-- Submit and Cancel buttons -->
+
+                    <button class="editBtn" type="submit">完成</button>
+                    <button
+                      type="button"
+                      class="editBtn"
+                      th:onclick="'toggleEditModeGrowthDetail(' + ${iterStat.index} + ')'"
+                    >
+                      放棄變更
+                    </button>
+                  </form>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
         <br /><br />
         <div class="uk-margin-small uk-card uk-card-default uk-card-body">
           <h3>處理階段</h3>
           <!-- 處理階段資料-->
-          <br />
-          <label for="datepicker">選擇日期：</label>
-          <input type="date" id="datepicker" name="datepicker" />
-          <script>
-            const today = new Date().toISOString().split("T")[0];
 
-            document.getElementById("datepicker").value = today;
-          </script>
           <table>
             <thead>
               <tr>
@@ -304,40 +468,37 @@
                 <th>操作</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td contenteditable="false">青心烏龍茶</td>
-                <td contenteditable="false">播種完畢</td>
-                <td contenteditable="false">種植中</td>
-                <td contenteditable="false">準備收成</td>
+            <tbody th:each="detailDTO, iterStat : ${plantingDetailDTOs}">
+              <tr
+                th:class="'detailID' + ${detailDTO.plantingDetail.plantingDetailID}"
+              >
+                <td th:text="${detailDTO.plantingDetail.plantingDetailID}"></td>
+                <td th:text="${detailDTO.plantingDetail.tea.teaName}"></td>
+                <td
+                  th:class="'previous-stage-cell' + ${detailDTO.plantingDetail.plantingDetailID}"
+                  th:text="${detailDTO.plantingDetail.previousStage}"
+                ></td>
+                <td
+                  th:class="'current-stage-cell' + ${detailDTO.plantingDetail.plantingDetailID}"
+                  th:text="${detailDTO.plantingDetail.currentStage}"
+                ></td>
+                <td
+                  th:class="'next-stage-cell' + ${detailDTO.plantingDetail.plantingDetailID}"
+                  th:text="${detailDTO.plantingDetail.nextStage}"
+                ></td>
+
                 <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
+                  <button
+                    class="stagebtn prev-stage"
+                    onclick="updateStageFunction(this, 'prev')"
+                  >
+                    回上一階段
                   </button>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td contenteditable="false">文山包種茶</td>
-                <td contenteditable="false">種植完畢</td>
-                <td contenteditable="false">收成中</td>
-                <td contenteditable="false">準備修剪</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td contenteditable="false">東方美人茶</td>
-                <td contenteditable="false">修剪完畢</td>
-                <td contenteditable="false">包裝中</td>
-                <td contenteditable="false">準備運送</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
+                  <button
+                    class="stagebtn next-stage"
+                    onclick="updateStageFunction(this, 'next')"
+                  >
+                    去下一階段
                   </button>
                 </td>
               </tr>
@@ -358,53 +519,21 @@
           <table id="myTable">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>訂單ID</th>
+                <th>訂單日期</th>
+                <th>訂購數量</th>
                 <th>顧客名稱</th>
-                <th>青心烏龍茶 ＄50/一包</th>
-                <th>文山包種茶 ＄70/一包</th>
-                <th>東方美人茶 ＄60/一包</th>
-                <th>總金額</th>
-                <th>聯絡確認</th>
-                <th>編輯</th>
+                <th>茶名</th>
+                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td contenteditable="false">John Doe</td>
-                <td contenteditable="false">50 包</td>
-                <td contenteditable="false">30 包</td>
-                <td contenteditable="false">70 包</td>
-                <td contenteditable="false">＄8800</td>
-                <td contenteditable="false">12/15 聯絡</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td contenteditable="false">Andy Lee</td>
-                <td contenteditable="false">40 包</td>
-                <td contenteditable="false">80 包</td>
-                <td contenteditable="false">10 包</td>
-                <td contenteditable="false">＄8200</td>
-                <td contenteditable="false">尚未聯絡</td>
-                <td>
-                  <button class="editBtn" onclick="toggleEditMode(this)">
-                    編輯
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td contenteditable="false">Alice Johnson</td>
-                <td contenteditable="false">10 包</td>
-                <td contenteditable="false">50 包</td>
-                <td contenteditable="false">90 包</td>
-                <td contenteditable="false">＄9400</td>
-                <td contenteditable="false">12/11 聯絡</td>
+              <tr th:each="order : ${orders}">
+                <td th:text="${order.OrderID}">訂單ID</td>
+                <td th:text="${order.ODate}">訂單日期</td>
+                <td th:text="${order.OQuantity}">訂購數量</td>
+                <td th:text="${order.customer.cName}">顧客名稱</td>
+                <td th:text="${order.tea.TeaName}">茶名</td>
                 <td>
                   <button class="editBtn" onclick="toggleEditMode(this)">
                     編輯
@@ -443,35 +572,25 @@
             <div class="close-container">
               <span button class="close" onclick="closeForm()">&times;</span>
             </div>
-            <form>
-              <label for="name">ID : </label>
-              <input type="textarea" id="id" name="id" />
-              <br /><br />
-              <label for="name">顧客名稱 : </label>
-              <input type="text" id="name" name="name" />
+            <form th:action="@{orders/add}" th:method="post">
+              <label for="customerSelect">選擇客戶: </label>
+              <select id="customerSelect" name="customerID">
+                <!-- 客戶選項將在這裡生成 -->
+              </select>
               <br /><br />
               <label for="name">青心烏龍茶之訂購量 : </label>
-              <input type="text" id="tea1Q" name="tea1Q" />
+              <input type="text" id="13" name="ulonTeaQuantity" />
               <br /><br />
               <label for="name">文山包種茶之訂購量 : </label>
-              <input type="text" id="tea2Q" name="tea2Q" />
+              <input type="text" id="14" name="wenshanTeaQuantity" />
               <br /><br />
               <label for="name">東方美人茶之訂購量 : </label>
-              <input type="text" id="tea3Q" name="tea3Q" />
+              <input type="text" id="15" name="beautyTeaQuantity" />
               <br /><br />
 
               <input type="submit" id="submit" value="上傳" />
             </form>
           </div>
-          <script>
-            function openForm() {
-              document.getElementById("myModal").style.display = "block";
-            }
-
-            function closeForm() {
-              document.getElementById("myModal").style.display = "none";
-            }
-          </script>
         </div>
       </div>
       <!-- 1224 加入"新增訂單功能" -->
@@ -497,25 +616,15 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
-                  <th>CLV</th>
+                  <th>姓名</th>
+                  <th>CLV（客戶終身價值）</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody th:each="customer, iterStat : ${customerAnalysis}">
                 <tr>
-                  <td>1</td>
-                  <td>John Doe</td>
-                  <td>$500</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Jane Smith</td>
-                  <td>$750</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Alice Johnson</td>
-                  <td>$600</td>
+                  <td th:text="${customer.customerID}"></td>
+                  <td th:text="${customer.cName}"></td>
+                  <td th:text="${customer.CLV}"></td>
                 </tr>
               </tbody>
             </table>
@@ -592,6 +701,81 @@
             加載顧客資料
           </button>
 
+          <button
+            class="uk-button uk-button-default"
+            onclick="toggleCustomerForm()"
+          >
+            新增客戶
+          </button>
+          <div
+            id="customerFormDiv"
+            class="uk-margin-small uk-card uk-card-default uk-card-body"
+            style="display: none"
+          >
+            <div class="uk-grid-small uk-flex-nowrap" uk-grid>
+              <p class="uk-text-lead uk-text-left uk-width-1-2@m">新增客戶</p>
+              <button
+                class="uk-close-large uk-width-1-2@m uk-text-right"
+                type="button"
+                uk-close
+                onclick="clearCustomerForm()"
+              ></button>
+            </div>
+
+            <form
+              action="/customer/add"
+              method="post"
+              id="customerForm"
+              class="uk-grid-small"
+              uk-grid
+            >
+              <div class="uk-width-1-4@s">
+                <input
+                  class="uk-input"
+                  type="text"
+                  placeholder="姓名"
+                  aria-label="姓名"
+                  name="CName"
+                />
+              </div>
+              <div class="uk-width-1-4@s">
+                <input
+                  class="uk-input"
+                  type="text"
+                  placeholder="年齡"
+                  aria-label="年齡"
+                  name="CAge"
+                />
+              </div>
+              <div class="uk-width-1-4@s">
+                <input
+                  class="uk-input"
+                  type="text"
+                  placeholder="地區"
+                  aria-label="地區"
+                  name="Address"
+                />
+              </div>
+              <div class="uk-width-1-4@s">
+                <input
+                  class="uk-input"
+                  type="text"
+                  placeholder="電話號碼"
+                  aria-label="電話號碼"
+                  name="CPhoneNum"
+                />
+              </div>
+              <div class="uk-width-1-1@s uk-text-right">
+                <button
+                  type="submit"
+                  class="uk-button uk-button-primary uk-align-center uk-margin-medium-top"
+                >
+                  提交
+                </button>
+              </div>
+            </form>
+          </div>
+
           <script>
             function loadCustomerData() {
               fetch("/customer/all")
@@ -627,12 +811,12 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
-                  <th>Age</th>
-                  <th>Location</th>
-                  <th>Phone Number</th>
-                  <th>Recency</th>
-                  <th>CLV</th>
+                  <th>姓名</th>
+                  <th>年齡</th>
+                  <th>地區</th>
+                  <th>電話號碼</th>
+                  <th>最近購買日期</th>
+                  <th>CLV（客戶終身價值）</th>
                 </tr>
               </thead>
               <tbody>

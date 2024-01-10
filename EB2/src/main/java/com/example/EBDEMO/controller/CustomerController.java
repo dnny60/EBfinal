@@ -49,8 +49,6 @@ public class CustomerController {
   public @ResponseBody String addNewUser (@RequestParam String CName
       , @RequestParam String CPhoneNum
       , @RequestParam String Address
-      , @RequestParam("LastPurchaseDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date LastPurchaseDate
-      , @RequestParam BigDecimal CLV
       , @RequestParam Long CAge) {
     // @ResponseBody means the returned String is the response, not a view name
     // @RequestParam means it is a parameter from the GET or POST request
@@ -59,8 +57,6 @@ public class CustomerController {
     n.setcName(CName);
     n.setAddress(Address);
     n.setcPhoneNum(CPhoneNum);
-    n.setLastPurchaseDate(LastPurchaseDate);
-    n.setCLV(CLV);
     n.setCAge(CAge);
     customerRepository.save(n);
     return "Saved";
@@ -71,10 +67,11 @@ public class CustomerController {
     // This returns a JSON or XML with the users
 	// This returns a JSON or XML with the users
 	    Iterable<Customer> customers = customerRepository.findAll();
-
+	    
+	    System.out.print(customers);
 	    // 打印所有客户信息到控制台
 	    for (Customer customer : customers) {
-	        System.out.println(customer.getAddress().toString());
+	        System.out.println(customer);
 	    }
 //    return customerRepository.findAll();
 	    return customers;

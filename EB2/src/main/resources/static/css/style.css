@@ -486,6 +486,14 @@ td {
   color: white;
 }
 
+.stagebtn {
+  width: 100px;
+  height: 30px;
+  cursor: pointer;
+  background-color: #e1c76e;
+  color: white;
+}
+
 .saveBtn {
   background-color: green;
   color: white;
