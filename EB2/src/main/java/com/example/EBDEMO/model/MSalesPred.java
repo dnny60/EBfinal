@@ -18,11 +18,16 @@ public class MSalesPred {
 	private static ArrayList<Double> sales;
 	private static ArrayList<Double> pred = new ArrayList<Double>();
 	
+	
+	
 	public MSalesPred(ArrayList<Double> month, ArrayList<Double> sales) throws Exception {
+		
 		this.month = month;
 		this.sales = sales;
 		Predict();
 	}
+	
+	
 	public ArrayList<Double> getMonth() {
 		return this.month;
 	}
@@ -33,6 +38,8 @@ public class MSalesPred {
 		return this.pred;
 	}
 	public void Predict() throws Exception {
+		this.pred.clear();
+		this.pred.add((double) 0);
 		// Create input attribute 
 	    Attribute inputAttr = new Attribute("month"); 
 	    // Create output attribute
@@ -69,7 +76,7 @@ public class MSalesPred {
 	    System.out.println("Monthly sales predictions:");
 	    DecimalFormat df = new DecimalFormat("0");
 	    
-	    for (int inputValue = 2; inputValue <= 15; inputValue++) {
+	    for (int inputValue = 2; inputValue <= (month.size()+3); inputValue++) {
 	      double prediction = model.classifyInstance(new DenseInstance(2, new double[] {inputValue}));
 	     
 	      String formattedPrediction = df.format(prediction);

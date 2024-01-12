@@ -46,7 +46,7 @@ public class CustomerController {
 
 
   @PostMapping(path="/add") // Map ONLY POST Requests
-  public @ResponseBody String addNewUser (@RequestParam String CName
+  public  String addNewUser (@RequestParam String CName
       , @RequestParam String CPhoneNum
       , @RequestParam String Address
       , @RequestParam Long CAge) {
@@ -59,7 +59,7 @@ public class CustomerController {
     n.setcPhoneNum(CPhoneNum);
     n.setCAge(CAge);
     customerRepository.save(n);
-    return "Saved";
+    return "redirect:/#cust-info";
   }
 
   @GetMapping(path="/all")

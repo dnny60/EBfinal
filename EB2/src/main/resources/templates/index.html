@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- boxicon cdn link -->
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -119,6 +120,7 @@
     <script type="text/javascript" th:src="@{/script.js/}"></script>
 
     <title>嘉義茶農</title>
+    <link rel="icon" th:href="@{images/icon.ico}" type="image/x-icon" />
   </head>
 
   <body>
@@ -163,7 +165,10 @@
     <!-- home section end -->
 
     <!-- inventory section -->
-    <div class="inventory" id="inventory">
+    <div
+      class="inventory uk-margin-small uk-card uk-card-default uk-card-body uk-container-small uk-container"
+      id="inventory"
+    >
       <div class="heading">
         <h1>庫存管理</h1>
       </div>
@@ -655,20 +660,15 @@
       <div class="heading">
         <h1>銷售分析</h1>
       </div>
-      <div class="box-container">
-        <!-- 年銷售額 Box -->
-        <div class="box" id="annual-sales-box">
-          <h2>年銷售額</h2>
-          <div id="annual_chart" style="width: 800px; height: 500px"></div>
-        </div>
-        <!-- 季銷售額 Box -->
-        <div class="box" id="quart-sales-box">
-          <h2>季銷售額</h2>
-          <div id="quart_chart" style="width: 800px; height: 500px"></div>
-        </div>
-
+      <div
+        class="box-container uk-margin-small uk-card uk-card-default uk-card-body uk-container-small uk-container"
+      >
         <!-- 月銷售額 Box -->
-        <div class="box" id="month-sales-box">
+
+        <div
+          class="box uk-margin-small uk-card uk-card-default uk-card-body uk-container-small uk-container"
+          id="month-sales-box"
+        >
           <h2>月銷售額</h2>
           <div id="month_chart" style="width: 800px; height: 500px"></div>
         </div>

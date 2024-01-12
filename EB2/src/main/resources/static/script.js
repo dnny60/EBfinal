@@ -48,32 +48,72 @@ function drawQuartChart() {
 
 //monthly chart
 function drawMonthChart() {
-  var data = google.visualization.arrayToDataTable([
-    ["月", "銷售額"],
-    ["1", 41000],
-    ["2", 54600],
-    ["3", 39200],
-    ["4", 40030],
-    ["5", 47090],
-    ["6", 50200],
-    ["7", 60300],
-    ["8", 70020],
-    ["9", 64030],
-    ["10", 50020],
-    ["11", 60200],
-    ["12", 60030],
-  ]);
+  fetch("/salesPredict/get")
+    .then((response) => response.json())
+    .then((data) => {
+      // 假设后端返回的数据格式为 { months: [...], sales: [...], predictions: [...] }
+      const months = data.months; // 实际销售数据的月份
+      const sales = data.sales; // 实际销售额
+      const predictions = data.predictions; // 预测的销售额
 
-  var options = {
-    chart: {
-      title: "月銷售額",
-      subtitle: "1~12月銷售額",
-    },
-  };
+      // 准备数据表的列标题
+      var chartData = [["月份", "實際銷售額", "預測銷售額"]];
 
-  var chart = new google.charts.Bar(document.getElementById("month_chart"));
-  chart.draw(data, google.charts.Bar.convertOptions(options));
+      // 填充实际销售数据和预测数据
+      for (let i = 0; i < months.length; i++) {
+        chartData.push([
+          months[i].toString(),
+          sales[i],
+          predictions[i] || null, // 使用 null 以避免将 undefined 添加到图表中
+        ]);
+      }
+
+      var data = google.visualization.arrayToDataTable(chartData);
+
+      var options = {
+        chart: {
+          title: "月銷售額預測",
+        },
+        colors: ["#76A7FA", "#D1FFC0"], // 设置列颜色
+      };
+
+      var chart = new google.charts.Bar(document.getElementById("month_chart"));
+      chart.draw(data, google.charts.Bar.convertOptions(options));
+    })
+    .catch((error) => console.error("Error:", error));
 }
+
+// function drawMonthChart() {
+//   fetch("/salesPredict/get")
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // 假设后端返回的数据格式为 { months: [...], sales: [...], predictions: [...] }
+//       const months = data.months; // 实际销售数据的月份
+//       const sales = data.sales; // 实际销售额
+//       const predictions = data.predictions; // 预测的销售额
+
+//       // 准备数据表的列标题
+//       var chartData = [["月份", "實際銷售額", "預測銷售額"]];
+
+//       // 填充实际销售数据和预测数据
+//       for (let i = 0; i < months.length; i++) {
+//         chartData.push([months[i].toString(), sales[i], predictions[i]]);
+//       }
+
+//       var data = google.visualization.arrayToDataTable(chartData);
+
+//       var options = {
+//         chart: {
+//           title: "月銷售額預測",
+//           subtitle: "1~12月銷售額",
+//         },
+//       };
+
+//       var chart = new google.charts.Bar(document.getElementById("month_chart"));
+//       chart.draw(data, google.charts.Bar.convertOptions(options));
+//     })
+//     .catch((error) => console.error("Error:", error));
+// }
 
 //bar chart for customer age distribution
 google.charts.load("current", { packages: ["bar"] });
